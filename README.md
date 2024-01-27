@@ -16,11 +16,11 @@ A demo application is located in `src/main.cpp` that encompasses the usage of th
 
 ### Features
 
-- [x] Draw textured sprites
-- [x] Texture atlases with custom UV coordinates
-- [x] Rotations
-- [x] Draw text using TTF fonts
-- [x] Draw UI elements
-- [x] Moveable camera
-- [x] Custom shader support
-- [x] Can be added as a CMake subdirectory
+- Draw textured sprites
+- Texture atlases with custom UV coordinates
+- Rotations
+- Draw text using TTF fonts
+- Draw UI elements
+- Moveable camera
+- Custom shader support
+- Can be added as a CMake subdirectory
