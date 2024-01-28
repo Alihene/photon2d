@@ -32,19 +32,26 @@ const char *fragmentShaderSource =
     "   color = vColor * texture(uTexture, vTexCoord);\n"
     "}\n";
 
-static void errorCallback(i32 err, const char *msg) {
+static void glfwErrorCallback(i32 err, const char *msg) {
     std::cerr << "GLFW Error (" << err << "): " << msg << std::endl;
     std::exit(-1);
 }
 
-static void framebufferSizeCallback(GLFWwindow *w, i32 width, i32 height) {
+static void glfwFramebufferSizeCallback(GLFWwindow *w, i32 width, i32 height) {
     photon::Window *window = reinterpret_cast<photon::Window*>(glfwGetWindowUserPointer(w));
     window->dimensions = glm::uvec2(width, height);
     glViewport(0, 0, width, height);
 }
 
+static void glfwKeyCallback(GLFWwindow *w, i32 key, i32 scancode, i32 action, i32 mods) {
+    photon::Window *window = reinterpret_cast<photon::Window*>(glfwGetWindowUserPointer(w));
+    if(window->keyCallback) {
+        window->keyCallback(key, action);
+    }
+}
+
 photon::Window::Window(std::string name, u32 width, u32 height, bool resizable) : dimensions(width, height) {
-    glfwSetErrorCallback(errorCallback);
+    glfwSetErrorCallback(glfwErrorCallback);
 
     if(!glfwInit()) {
         std::cerr << "Failed to initialize GLFW" << std::endl;
@@ -63,7 +70,8 @@ photon::Window::Window(std::string name, u32 width, u32 height, bool resizable) 
     }
 
     glfwSetWindowUserPointer(handle, this);
-    glfwSetFramebufferSizeCallback(handle, framebufferSizeCallback);
+    glfwSetFramebufferSizeCallback(handle, glfwFramebufferSizeCallback);
+    glfwSetKeyCallback(handle, glfwKeyCallback);
 
     glfwMakeContextCurrent(handle);
 
@@ -88,6 +96,10 @@ bool photon::Window::shouldClose() {
 
 f32 photon::Window::aspectRatio() const {
     return (f32) dimensions.x / (f32) dimensions.y;
+}
+
+bool photon::Window::isKeyDown(i32 key) {
+    return glfwGetKey(handle, key) == GLFW_PRESS;
 }
 
 photon::ShaderProgram::ShaderProgram(std::string vertexSource, std::string fragmentSource) {
@@ -366,7 +378,7 @@ glm::vec4 photon::Font::getGlyphTexCoords(const char c) {
     return glm::vec4(quad.s0, quad.t0, quad.s1, quad.t1);
 }
 
-photon::Text::Text(Font *font, std::string str, glm::vec2 pos, f32 size, f32 spacing) : font(font), str(str), pos(pos), size(size), spacing(spacing) {
+photon::Text::Text(Font *font, std::string str, glm::vec2 pos, f32 size, f32 spacing, bool centered) : font(font), str(str), pos(pos), size(size), spacing(spacing), centered(centered) {
     createSprites();
 }
 

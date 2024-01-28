@@ -26,6 +26,8 @@ typedef size_t usize;
 
 namespace photon {
 
+typedef void (*KeyCallback)(i32, i32);
+
 struct SpriteBatch;
 
 struct Camera {
@@ -37,6 +39,7 @@ struct Window {
     GLFWwindow *handle;
 
     glm::uvec2 dimensions;
+    KeyCallback keyCallback = nullptr;
 
     Window(std::string name, u32 width, u32 height, bool resizable);
 
@@ -46,6 +49,8 @@ struct Window {
     bool shouldClose();
 
     f32 aspectRatio() const;
+
+    bool isKeyDown(i32 key);
 };
 
 struct ShaderProgram {
@@ -130,9 +135,10 @@ struct Text {
     glm::vec2 pos;
     f32 size;
     f32 spacing;
+    bool centered;
 
     Text() = default;
-    Text(Font *font, std::string str, glm::vec2 pos, f32 size, f32 spacing);
+    Text(Font *font, std::string str, glm::vec2 pos, f32 size, f32 spacing, bool centered);
 
     void createSprites();
     void update();

@@ -1,7 +1,15 @@
 #include <photon2d.hpp>
 
+static void keyCallback(i32 key, i32 action) {
+    if(action == GLFW_PRESS) {
+        std::cout << "Key pressed: " << key << std::endl;
+    }
+}
+
 int main() {
-    photon::Window window("Hello, World!", 854, 480, true);
+    photon::Window window("Hello, World!", 854, 480, true); 
+    window.keyCallback = keyCallback;
+
     photon::Renderer2D renderer(&window);
     renderer.setClearColor(0.0f, 0.0f, 1.0f, 1.0f);
     photon::Texture nullTexture("../resources/null.png", photon::Texture::RGBA);
@@ -14,7 +22,7 @@ int main() {
     renderer.addSprite(&sprite2);
 
     photon::Font font("../resources/arial.ttf");
-    photon::Text text(&font, "Hello, Photon!", glm::vec2(0.0f, 50.0f), 0.15f, 0.5f);
+    photon::Text text(&font, "Hello, Photon!", glm::vec2(0.0f, 50.0f), 0.15f, 0.5f, false);
     renderer.addText(&text);
 
     f64 lastTime = glfwGetTime();
