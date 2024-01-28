@@ -22,7 +22,7 @@ int main() {
     renderer.addSprite(&sprite2);
 
     photon::Font font("../resources/arial.ttf");
-    photon::Text text(&font, "Hello, Photon!", glm::vec2(0.0f, 50.0f), 0.15f, 0.5f, false);
+    photon::Text text(&font, "Hello, Photon!", glm::vec2(0.0f, 50.0f), 0.15f, glm::vec4(1.0f), 0.5f, false);
     renderer.addText(&text);
 
     f64 lastTime = glfwGetTime();

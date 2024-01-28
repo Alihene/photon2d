@@ -378,7 +378,7 @@ glm::vec4 photon::Font::getGlyphTexCoords(const char c) {
     return glm::vec4(quad.s0, quad.t0, quad.s1, quad.t1);
 }
 
-photon::Text::Text(Font *font, std::string str, glm::vec2 pos, f32 size, f32 spacing, bool centered) : font(font), str(str), pos(pos), size(size), spacing(spacing), centered(centered) {
+photon::Text::Text(Font *font, std::string str, glm::vec2 pos, f32 size, glm::vec4 color, f32 spacing, bool centered) : font(font), str(str), pos(pos), size(size), color(color), spacing(spacing), centered(centered) {
     createSprites();
 }
 
@@ -405,6 +405,7 @@ void photon::Text::createSprites() {
         } else if (c >= ' ' && c <= '~') {
             photon::Sprite sprite(glm::vec2(xPos, yPos - quad.y1 * size), glm::vec2((quad.x1 - quad.x0) * size, (quad.y1 - quad.y0) * size), &font->texture);
             sprite.texCoords = font->getGlyphTexCoords(c);
+            sprite.color = color;
             sprites.push_back(sprite);
             xPos += (quad.x1 - quad.x0) * size + spacing;
         }

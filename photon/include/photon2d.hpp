@@ -134,11 +134,12 @@ struct Text {
 
     glm::vec2 pos;
     f32 size;
+    glm::vec4 color;
     f32 spacing;
     bool centered;
 
     Text() = default;
-    Text(Font *font, std::string str, glm::vec2 pos, f32 size, f32 spacing, bool centered);
+    Text(Font *font, std::string str, glm::vec2 pos, f32 size, glm::vec4 color, f32 spacing, bool centered);
 
     void createSprites();
     void update();
