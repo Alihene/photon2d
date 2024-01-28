@@ -104,13 +104,6 @@ struct Sprite {
     void remove();
 };
 
-struct GlyphInfo {
-	glm::vec4 size;
-    glm::vec4 texCoords;
-	f32 offsetX = 0;
-	f32 offsetY = 0;
-};
-
 struct Font {
     stbtt_fontinfo info;
     Texture texture;
