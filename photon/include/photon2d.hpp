@@ -119,7 +119,6 @@ struct Font {
 
     stbtt_aligned_quad getGlyphQuad(const char c);
     glm::vec4 getGlyphTexCoords(const char c);
-    i32 getGlyphKern(const char c1, const char c2);
 };
 
 struct Text {

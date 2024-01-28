@@ -54,6 +54,7 @@ photon::Window::Window(std::string name, u32 width, u32 height, bool resizable) 
     glfwWindowHint(GLFW_RESIZABLE, resizable ? GLFW_TRUE : GLFW_FALSE);
     glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 1);
+    glfwWindowHint(GLFW_SAMPLES, 4);
     handle = glfwCreateWindow(width, height, name.c_str(), nullptr, nullptr);
 
     if(!handle) {
@@ -365,17 +366,12 @@ glm::vec4 photon::Font::getGlyphTexCoords(const char c) {
     return glm::vec4(quad.s0, quad.t0, quad.s1, quad.t1);
 }
 
-i32 photon::Font::getGlyphKern(const char c1, const char c2) {
-    i32 kern = stbtt_GetCodepointKernAdvance(&info, c1, c2);
-    return kern;
-}
-
 photon::Text::Text(Font *font, std::string str, glm::vec2 pos, f32 size, f32 spacing) : font(font), str(str), pos(pos), size(size), spacing(spacing) {
     createSprites();
 }
 
 void photon::Text::createSprites() {
-    u32 length = str.length();
+    u32 length = str.size();
 
     f32 xPos = pos.x;
     f32 yPos = pos.y;
@@ -387,34 +383,18 @@ void photon::Text::createSprites() {
 
     for(i32 i = 0; i < length; i++) {
         char c = str[i];
-
         stbtt_aligned_quad quad = font->getGlyphQuad(c);
 
-        glm::ivec4 metrics;
-        stbtt_GetGlyphBitmapBox(&font->info, c, scale, scale, &metrics.x, &metrics.y, &metrics.z, &metrics.w);
-
-        f32 maxSize = font->getGlyphQuad('A').y1 - font->getGlyphQuad('A').y0;
-
         if(c == ' ') {
-            stbtt_aligned_quad lineQuad = font->getGlyphQuad('-');
-            
-            f32 kern = 0.0f;
-            if(i < length - 1) {
-                kern = font->getGlyphKern('-', str[i + 1]);
-            }
-
-            xPos += (lineQuad.x1 - lineQuad.x0) * size + spacing + kern * size * scale;
+            xPos += spacing * 5.0f;
+        } else if(c == '\n') {
+            yPos -= (ascent - descent + lineGap) * scale * size;
+            xPos = pos.x;
         } else if (c >= ' ' && c <= '~') {
-            
-            f32 kern = 0.0f;
-            if(i < length - 1) {
-                kern = font->getGlyphKern(c, str[i + 1]);
-            }
-
             photon::Sprite sprite(glm::vec2(xPos, yPos - quad.y1 * size), glm::vec2((quad.x1 - quad.x0) * size, (quad.y1 - quad.y0) * size), &font->texture);
             sprite.texCoords = font->getGlyphTexCoords(c);
             sprites.push_back(sprite);
-            xPos += (quad.x1 - quad.x0) * size + spacing + kern * size * scale;
+            xPos += (quad.x1 - quad.x0) * size + spacing;
         }
     }
 }
@@ -522,6 +502,8 @@ photon::Renderer2D::Renderer2D(const Window *window) : window(window) {
 
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
+    glEnable(GL_MULTISAMPLE);
 }
 
 void photon::Renderer2D::setClearColor(f32 r, f32 g, f32 b, f32 a) {
